@@ -1,0 +1,63 @@
+﻿@page
+@model NotisissimusSimpleSearch.Models.Product
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>AutoSearch App</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        #results {
+            position: absolute;
+            background-color: lightslategrey;
+            border: 1px solid #ccc;
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        #results li {
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        #results li:hover {
+                    background-color: #ABCDEF;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Автопоиск</h1>
+        <input type="text" id="searchInput" placeholder="Начните вводить текст..." class="form-control" />
+        <ul id="results"></ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#searchInput').on('keyup', function () {
+                let query = $(this).val().trim();
+                if (query.length > 2) {
+                    $.getJSON('/search?query=' + encodeURIComponent(query), function (data) {
+                        $('#results').empty();
+                        data.forEach(item => {
+                            $('#results').append(`<li>${item}</li>`);
+                        });
+                        $('#results').show();
+                    });
+                } else {
+                    $('#results').hide();
+                }
+            });
+
+            $('#results').on('click', 'li', function () {
+                $('#searchInput').val($(this).text());
+                $('#results').hide();
+            });
+        });
+    </script>
+</body>
+</html>
