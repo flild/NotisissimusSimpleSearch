@@ -25,28 +25,20 @@ namespace NotisissimusSimpleSearch.Services
                 };
 
                 _db.Products.Add(product);
+                if(i %2000 == 0)
+                {
+                    _db.SaveChanges();
+                }
             }
-            var product1 = new Product
-            {
-                Name = "Перчатки",
-                Description = "Перчатки хозяйственные Aviora резиновые M "
-            };
-            var product2 = new Product
-            {
-                Name = "Гусь-обнимусь",
-                Description = "Гусь Мягкая игрушка Гусь-обнимусь упаковывается вакуумным способом для более удобной и практичной транспортировки. После распаковки игрушки Гусь, наполнитель синтешар необходимо распределить равномерно внутри игрушки вручную и немного ее взбить, так как при откачке воздуха он спрессовывается. Не знаете что подарить на день рождение ребёнку? Или как просто удивить? Тогда вам нужна самая популярная игрушка этого год."
-            };
-
 
             _db.SaveChanges();
         }
 
-        public List<string> GetProductViaFTSAsync(string query)
+        public async Task<List<string>> GetProductViaFTSAsync(string query)
         {
-
-            var sql = $@"SELECT ""Name"" FROM ""Products""
-             WHERE to_tsvector(""russian"", ""Name"" || ' ' || ""Description"") @@ {query}";
-
+            var sql = "SELECT * FROM \"Products\" " +
+                "WHERE to_tsvector('russian', coalesce(\"Name\", '') || ' ' || " +
+                $"coalesce(\"Description\", '')) @@ to_tsquery('russian', '{query}' || ':*')";
             var products = _db.Products
                 .FromSqlRaw(sql)
                 .Select(p => p.Name)

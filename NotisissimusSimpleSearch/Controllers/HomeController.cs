@@ -25,7 +25,7 @@ namespace NotisissimusSimpleSearch.Controllers
                 return Ok(new List<string>());
             try
             {
-                var products = _productService.GetProductViaFTSAsync(query);
+                var products = await _productService.GetProductViaFTSAsync(query);
                 return Ok(JsonSerializer.Serialize(products));
             }
             catch (Exception ex)
@@ -33,6 +33,11 @@ namespace NotisissimusSimpleSearch.Controllers
 
                 return BadRequest(ex.Message);
             }
+        }
+        public async Task<IActionResult> GenerateRandomData(int count)
+        {
+            _productService.GenerateRandomData(count);
+            return RedirectToAction("Index", "Home");
         }
         
 

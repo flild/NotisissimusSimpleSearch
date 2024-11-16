@@ -29,11 +29,19 @@
     </style>
 </head>
 <body>
+    <form asp-action="GenerateRandomData">
+        <div class="col-10 mt-3 mb-3">
+            <label for="count">Количество записей:</label>
+            <input type="number" id ="Count" name ="Count" value="10" />
+            <button id="GenerateBtn" type="submit">Генерация данных</button>
+        </div>
+    </form>
     <div class="container mt-5">
         <h1>Автопоиск</h1>
         <input type="text" id="searchInput" placeholder="Начните вводить текст..." class="form-control" />
         <ul id="results"></ul>
     </div>
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -59,5 +67,6 @@
             });
         });
     </script>
+
 </body>
 </html>

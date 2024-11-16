@@ -1,4 +1,4 @@
-﻿using NpgsqlTypes;
+﻿
 using System.ComponentModel.DataAnnotations;
 
 namespace NotisissimusSimpleSearch.Models
