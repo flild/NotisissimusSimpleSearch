@@ -16,6 +16,7 @@ namespace NotisissimusSimpleSearch.Services
         }
         public Product GetProductById(int id)
         {
+            //
             return _db.Products.SingleOrDefault(p => p.Id == id);
         }
         public async Task<List<string>> GetProductViaFTSAsync(string query)
