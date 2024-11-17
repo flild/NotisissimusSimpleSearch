@@ -14,6 +14,22 @@ namespace NotisissimusSimpleSearch.Services
         {
             _db = db;
         }
+        public Product GetProductById(int id)
+        {
+            return _db.Products.SingleOrDefault(p => p.Id == id);
+        }
+        public async Task<List<string>> GetProductViaFTSAsync(string query)
+        {
+            var sql = "SELECT * FROM \"Products\" " +
+                "WHERE to_tsvector('russian', coalesce(\"Name\", '') || ' ' || " +
+                $"coalesce(\"Description\", '')) @@ to_tsquery('russian', '{query}' || ':*')";
+            var products = _db.Products
+                .FromSqlRaw(sql)
+                .Select(p => p.Name)
+                .Take(10)
+                .ToList();
+            return products;
+        }
         public void GenerateRandomData(int count)
         {
             for (int i = 0; i < count; i++)
@@ -34,17 +50,6 @@ namespace NotisissimusSimpleSearch.Services
             _db.SaveChanges();
         }
 
-        public async Task<List<string>> GetProductViaFTSAsync(string query)
-        {
-            var sql = "SELECT * FROM \"Products\" " +
-                "WHERE to_tsvector('russian', coalesce(\"Name\", '') || ' ' || " +
-                $"coalesce(\"Description\", '')) @@ to_tsquery('russian', '{query}' || ':*')";
-            var products = _db.Products
-                .FromSqlRaw(sql)
-                .Select(p => p.Name)
-                .Take(10)
-                .ToList();
-            return products;
-        }
+
     }
 }
