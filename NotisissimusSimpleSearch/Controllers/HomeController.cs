@@ -40,7 +40,11 @@ namespace NotisissimusSimpleSearch.Controllers
             return RedirectToAction("Index", "Home");
         }
         
-
+        public async Task<IActionResult> CreateProduct(string name, string descriprtion)
+        {
+            _productService.CreateProduct(new Product { Name =name, Description = descriprtion});
+            return RedirectToAction("Index", "Home");
+        }
         public IActionResult Index()
         {
             return View();

@@ -14,8 +14,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 
 // Add services to the container.
 builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddControllersWithViews();
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient("Manticore", u => u.BaseAddress =
+    new Uri(builder.Configuration["ServiceUrls:Manticore"]));
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
