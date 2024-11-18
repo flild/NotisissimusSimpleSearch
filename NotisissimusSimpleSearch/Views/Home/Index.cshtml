@@ -36,6 +36,15 @@
             <button id="GenerateBtn" type="submit">Генерация данных</button>
         </div>
     </form>
+    <form asp-action="CreateProduct">
+        <div class="col-10 mt-3 mb-3">
+            <label>Имя: </label>
+            <input type="text" id="name" name="name" />
+            <label>Описание: </label>
+            <input type="text" id="descriprtion" name="descriprtion" />
+            <button id="CreateBtn" type="submit">Создать товар</button>
+        </div>
+    </form>
     <div class="container mt-5">
         <h1>Автопоиск</h1>
         <input type="text" id="searchInput" placeholder="Начните вводить текст..." class="form-control" />

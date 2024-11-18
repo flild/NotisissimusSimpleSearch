@@ -49,7 +49,10 @@ namespace NotisissimusSimpleSearch.Services
 
             _db.SaveChanges();
         }
-
-
+        public void CreateProduct(Product product)
+        {
+            _db.Products.Add(product);
+            _db.SaveChanges();
+        }
     }
 }
