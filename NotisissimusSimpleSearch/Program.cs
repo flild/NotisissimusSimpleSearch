@@ -16,7 +16,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
 builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddHttpClient("Manticore", u => u.BaseAddress =
+builder.Services.AddHttpClient< IProductService, ProductService>(u => u.BaseAddress =
     new Uri(builder.Configuration["ServiceUrls:Manticore"]));
 builder.Services.AddControllersWithViews();
 

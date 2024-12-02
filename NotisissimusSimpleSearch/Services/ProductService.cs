@@ -9,6 +9,9 @@ using ManticoreSearch.Model;
 using System;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Net.Http;
+using System.ComponentModel;
+using Newtonsoft.Json;
+using System.Text;
 
 
 namespace NotisissimusSimpleSearch.Services
@@ -21,18 +24,13 @@ namespace NotisissimusSimpleSearch.Services
         private readonly IndexApi _indexApi;
         private readonly SearchApi _searchApi;
         private readonly UtilsApi _utilsApi;
+        private readonly HttpClient client;
+        private readonly string BasePath = "http://127.0.0.1:9306";
+        private readonly HttpClient _manticoreClient;
 
-        public ProductService(IHttpClientFactory httpClientFactory) 
+        public ProductService(HttpClient manticoreClient) 
         {
-            _httpClientFactory = httpClientFactory;
-            var client = _httpClientFactory.CreateClient("Product");
-            var config = new Configuration();
-            config.BasePath = "http://127.0.0.1:9308";
-            var httpClientHandler = new HttpClientHandler();
-            // Perform insert and search operations
-            _indexApi = new IndexApi(client, config, httpClientHandler);
-            _searchApi = new SearchApi(client, config, httpClientHandler);
-            _utilsApi = new UtilsApi(client, config, httpClientHandler);
+            _manticoreClient = manticoreClient;
         }
         public Product GetProductById(int id)
         {
@@ -41,35 +39,31 @@ namespace NotisissimusSimpleSearch.Services
         }
         public void CreateProduct(Product product)
         {
-            string tableName = "Products";
-            try
-            {
-                Dictionary<string, Object> doc = new Dictionary<string, Object>();
-                doc.Add("Name", product.Name);
-                doc.Add("Description", product.Description);
-                InsertDocumentRequest insertDocumentRequest = new InsertDocumentRequest(Index: "products", Doc: doc);
-                _indexApi.Insert(insertDocumentRequest);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
+           
+
         }
         public async Task<List<string>> GetProductViaFTSAsync(string request)
         {
-            SearchRequest searchRequest = new SearchRequest(Index: "Products");
-            Highlight queryHighlight = new Highlight();
-            List<string> highlightFields = new List<string>();
-            highlightFields.Add("Name");
-            highlightFields.Add("Description");
-            queryHighlight.Fields = highlightFields;
-            SearchQuery query = new SearchQuery();
-            query.Match = request;
-            searchRequest.Query = query;
-            searchRequest.Highlight = queryHighlight;
+            // Формируем тело запроса
+            var requestBody = new { query = "SELECT * FROM poisk" };
 
-            SearchResponse searchResponse = _searchApi.Search(searchRequest);
-            Console.WriteLine(searchResponse);
+            // Отправляем POST-запрос
+            HttpResponseMessage response = await _manticoreClient.PostAsJsonAsync("sыql", requestBody);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string result = await response.Content.ReadAsStringAsync();
+
+                // Здесь вы можете обработать результат запроса, например, десериализовать JSON
+                Console.WriteLine(result);// Пример десериализации
+
+            }
+            else
+            {
+                // Обработка ошибки
+                Console.WriteLine($"Ошибка при выполнении запроса: {(int)response.StatusCode} {response.ReasonPhrase}");
+            }
+
             return new List<string>();
         }
         public void GenerateRandomData(int count)
