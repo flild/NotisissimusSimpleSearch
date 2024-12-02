@@ -48,7 +48,7 @@ namespace NotisissimusSimpleSearch.Services
             var requestBody = new { query = "SELECT * FROM poisk" };
 
             // Отправляем POST-запрос
-            HttpResponseMessage response = await _manticoreClient.PostAsJsonAsync("sыql", requestBody);
+            HttpResponseMessage response = await _manticoreClient.PostAsJsonAsync("sql", requestBody);
 
             if (response.IsSuccessStatusCode)
             {
